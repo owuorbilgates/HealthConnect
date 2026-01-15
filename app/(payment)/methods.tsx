@@ -3,7 +3,7 @@ import { ThemedView } from '@/components/themed-view';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 
-// const mpesaLogo = require('@/assets/images/mpesa-logo.png'); // Placeholder, will need to create this
+ const mpesaLogo = require('@/assets/images/mpesa-logo.svg.webp'); // Placeholder, will need to create this
 
 export default function PaymentMethodsScreen() {
   const router = useRouter();
