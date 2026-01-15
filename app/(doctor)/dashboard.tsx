@@ -1,8 +1,9 @@
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { useRouter } from 'expo-router';
+import { useRouter, Stack } from 'expo-router';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 
 const MOCK_APPOINTMENTS = [
   {
@@ -28,6 +29,17 @@ const MOCK_APPOINTMENTS = [
   },
 ];
 
+const EarningsWallet = () => (
+    <View style={styles.walletCard}>
+        <ThemedText style={styles.walletTitle}>My Wallet</ThemedText>
+        <Text style={styles.walletBalance}>KES 42,500</Text>
+        <Text style={styles.walletSubtext}>Total Earnings</Text>
+        <TouchableOpacity style={styles.withdrawButton}>
+            <Text style={styles.withdrawButtonText}>Withdraw to M-Pesa</Text>
+        </TouchableOpacity>
+    </View>
+);
+
 export default function DoctorDashboard() {
   const router = useRouter();
 
@@ -45,8 +57,31 @@ export default function DoctorDashboard() {
 
   return (
     <ThemedView style={styles.container}>
+      <Stack.Screen 
+        options={{ 
+            title: 'HealthConnect',
+            headerRight: () => (
+                <TouchableOpacity onPress={() => router.push({ pathname: '/(settings)', params: { role: 'doctor' }})}>
+                    <Ionicons name="person-circle-outline" size={32} color="#007AFF" style={{ marginRight: 16 }} />
+                </TouchableOpacity>
+            )
+        }} 
+      />
       <SafeAreaView style={styles.safeArea}>
-        <ThemedText type="title" style={styles.title}>Upcoming Appointments</ThemedText>
+        <ThemedText type="title" style={styles.title}>Doctor Dashboard</ThemedText>
+        
+        <EarningsWallet />
+
+        <View style={styles.toolsContainer}>
+             <TouchableOpacity style={styles.toolButton} onPress={() => router.push('/(doctor)/availability')}>
+                <Text style={styles.toolButtonText}>Manage Availability</Text>
+            </TouchableOpacity>
+             <TouchableOpacity style={styles.toolButton} onPress={() => router.push('/(doctor)/prescription')}>
+                <Text style={styles.toolButtonText}>Write Prescription</Text>
+            </TouchableOpacity>
+        </View>
+
+        <ThemedText type="subtitle" style={styles.subtitle}>Upcoming Appointments</ThemedText>
         <FlatList
           data={MOCK_APPOINTMENTS}
           renderItem={renderAppointment}
@@ -70,6 +105,61 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 'bold',
     marginVertical: 16,
+  },
+  subtitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginTop: 24,
+    marginBottom: 8,
+  },
+  walletCard: {
+    backgroundColor: '#007AFF',
+    borderRadius: 16,
+    padding: 20,
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  walletTitle: {
+      color: '#fff',
+      fontSize: 16,
+      opacity: 0.8,
+  },
+  walletBalance: {
+      color: '#fff',
+      fontSize: 40,
+      fontWeight: 'bold',
+      marginVertical: 4,
+  },
+  walletSubtext: {
+      color: '#fff',
+      opacity: 0.8,
+  },
+  withdrawButton: {
+      backgroundColor: 'rgba(255,255,255,0.2)',
+      borderRadius: 20,
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      marginTop: 16,
+  },
+  withdrawButtonText: {
+      color: '#fff',
+      fontWeight: 'bold',
+  },
+  toolsContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+  },
+  toolButton: {
+      backgroundColor: '#f0f0f0',
+      padding: 16,
+      borderRadius: 8,
+      flex: 1,
+      marginHorizontal: 8,
+      alignItems: 'center',
+  },
+  toolButtonText: {
+      fontWeight: '600',
+      fontSize: 15,
   },
   listContainer: {
     paddingBottom: 16,
@@ -111,9 +201,9 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   confirmed: {
-    backgroundColor: '#34C759', // Green
+    backgroundColor: '#34C759',
   },
   pending: {
-    backgroundColor: '#FF9500', // Orange
+    backgroundColor: '#FF9500',
   },
 });

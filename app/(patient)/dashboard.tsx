@@ -1,8 +1,9 @@
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { useRouter } from 'expo-router';
+import { useRouter, Stack } from 'expo-router';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 
 const MOCK_DOCTORS = [
   {
@@ -58,6 +59,16 @@ export default function PatientDashboard() {
 
   return (
     <ThemedView style={styles.container}>
+      <Stack.Screen 
+        options={{ 
+            title: 'HealthConnect',
+            headerRight: () => (
+                <TouchableOpacity onPress={() => router.push({ pathname: '/(settings)', params: { role: 'patient' }})}>
+                    <Ionicons name="person-circle-outline" size={32} color="#007AFF" style={{ marginRight: 16 }} />
+                </TouchableOpacity>
+            )
+        }} 
+      />
       <SafeAreaView style={styles.safeArea}>
         <ThemedText type="title" style={styles.title}>Available Doctors</ThemedText>
         <FlatList

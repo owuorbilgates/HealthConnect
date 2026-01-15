@@ -1,147 +1,154 @@
-import { useLocalSearchParams, Stack } from 'expo-router';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform } from 'react-native';
+import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, PanResponder, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ThemedView } from '@/components/themed-view';
-import { useState } from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import { useRef, useState } from 'react';
 
-// Mock data - in a real app, this would be fetched based on the consultation ID
-const MOCK_APPOINTMENTS = {
-  '1': { patientName: 'Alice Johnson' },
-  '2': { patientName: 'Bob Williams' },
-  '3': { patientName: 'Charlie Brown' },
+// Re-using the chat component logic from the previous version inside a modal
+const ChatOverlay = ({ visible, onClose }: { visible: boolean; onClose: () => void }) => {
+    // Basic chat functionality for the overlay
+    const [messages, setMessages] = useState([
+        { id: '1', text: 'Hello, I\'m ready for our consultation.', sender: 'patient' },
+        { id: '2', text: 'Hi, how are you feeling today?', sender: 'doctor' },
+    ]);
+    return (
+        <Modal visible={visible} animationType="slide" transparent={false}>
+            <SafeAreaView style={{flex: 1, padding: 16}}>
+                <TouchableOpacity onPress={onClose}>
+                    <Text style={{color: '#007AFF', marginBottom: 16}}>Close Chat</Text>
+                </TouchableOpacity>
+                {/* A simplified list view for chat */}
+                <View style={{flex: 1, backgroundColor: '#f0f0f0', borderRadius: 8}}>
+                    {messages.map(m => <Text key={m.id} style={{padding: 8, alignSelf: m.sender === 'doctor' ? 'flex-end' : 'flex-start'}}>{m.text}</Text>)}
+                </View>
+            </SafeAreaView>
+        </Modal>
+    );
 };
 
-const MOCK_MESSAGES = [
-  { id: '1', text: 'Hello, I\'m ready for our consultation.', sender: 'patient' },
-  { id: '2', text: 'Hi Alice, I\'m Dr. Okoro. How are you feeling today?', sender: 'doctor' },
-];
+export default function VideoConsultationScreen() {
+    const router = useRouter();
+    const { id } = useLocalSearchParams<{ id: string }>();
+    const [isMuted, setIsMuted] = useState(false);
+    const [isCameraOff, setIsCameraOff] = useState(false);
+    const [isChatVisible, setIsChatVisible] = useState(false);
 
-type Message = { id: string; text: string; sender: 'patient' | 'doctor' };
+    // For Draggable self-view
+    const pan = useRef(new Animated.ValueXY()).current;
+    const panResponder = PanResponder.create({
+        onMoveShouldSetPanResponder: () => true,
+        onPanResponderMove: Animated.event([null, { dx: pan.x, dy: pan.y }], { useNativeDriver: false }),
+        onPanResponderRelease: () => {
+            // You can add snap-to-corner logic here if needed
+        },
+    });
 
-export default function ConsultationScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
-  const appointment = MOCK_APPOINTMENTS[id as keyof typeof MOCK_APPOINTMENTS] || { patientName: 'Unknown Patient' };
-
-  const [messages, setMessages] = useState<Message[]>(MOCK_MESSAGES);
-  const [inputText, setInputText] = useState('');
-
-  const handleSend = () => {
-    if (inputText.trim().length === 0) return;
-
-    const newMessage: Message = {
-      id: (messages.length + 1).toString(),
-      text: inputText,
-      sender: 'doctor', // Assuming the doctor is the one sending messages from this screen
-    };
-    setMessages(prevMessages => [...prevMessages, newMessage]);
-    setInputText('');
-  };
-
-  const renderMessage = ({ item }: { item: Message }) => {
-    const isDoctor = item.sender === 'doctor';
     return (
-      <View style={[styles.messageBubble, isDoctor ? styles.doctorBubble : styles.patientBubble]}>
-        <Text style={isDoctor ? styles.doctorText : styles.patientText}>{item.text}</Text>
-      </View>
-    );
-  };
+        <ThemedView style={styles.container}>
+            <Stack.Screen options={{ title: 'Video Call', headerShown: false }} />
 
-  return (
-    <ThemedView style={styles.container}>
-      <Stack.Screen options={{ title: `Chat with ${appointment.patientName}` }} />
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardAvoidingView}
-        keyboardVerticalOffset={80}
-      >
-        <SafeAreaView style={styles.safeArea}>
-          <FlatList
-            data={messages}
-            renderItem={renderMessage}
-            keyExtractor={item => item.id}
-            contentContainerStyle={styles.messageList}
-            inverted
-          />
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              value={inputText}
-              onChangeText={setInputText}
-              placeholder="Type your message..."
-              placeholderTextColor="#999"
-            />
-            <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
-              <Text style={styles.sendButtonText}>Send</Text>
-            </TouchableOpacity>
-          </View>
-        </SafeAreaView>
-      </KeyboardAvoidingView>
-    </ThemedView>
-  );
+            {/* Remote Video Area */}
+            <View style={styles.remoteVideo}>
+                <Text style={styles.placeholderText}>Remote Video Stream</Text>
+            </View>
+
+            {/* Draggable Self View */}
+            <Animated.View style={[styles.selfView, { transform: [{ translateX: pan.x }, { translateY: pan.y }] }]} {...panResponder.panHandlers}>
+                <Text style={styles.placeholderText}>Self View</Text>
+            </Animated.View>
+
+            <SafeAreaView style={styles.overlay}>
+                {/* In-call Action Buttons */}
+                <View style={styles.topActions}>
+                    <TouchableOpacity style={styles.actionButton} onPress={() => setIsChatVisible(true)}>
+                        <Ionicons name="chatbubbles-outline" size={28} color="#fff" />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.actionButton}>
+                        <Ionicons name="document-text-outline" size={28} color="#fff" />
+                    </TouchableOpacity>
+                </View>
+
+                {/* Controls Toolbar */}
+                <View style={styles.toolbar}>
+                    <TouchableOpacity style={styles.controlButton} onPress={() => setIsMuted(!isMuted)}>
+                        <Ionicons name={isMuted ? "mic-off" : "mic"} size={32} color="#fff" />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.controlButton} onPress={() => setIsCameraOff(!isCameraOff)}>
+                        <Ionicons name={isCameraOff ? "videocam-off" : "videocam"} size={32} color="#fff" />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.controlButton}>
+                        <Ionicons name="camera-reverse" size={32} color="#fff" />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.controlButton, styles.endCallButton]} onPress={() => router.back()}>
+                        <Ionicons name="call" size={32} color="#fff" />
+                    </TouchableOpacity>
+                </View>
+            </SafeAreaView>
+
+            <ChatOverlay visible={isChatVisible} onClose={() => setIsChatVisible(false)} />
+        </ThemedView>
+    );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  keyboardAvoidingView: {
-    flex: 1,
-  },
-  safeArea: {
-    flex: 1,
-  },
-  messageList: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    flexGrow: 1,
-    justifyContent: 'flex-end',
-  },
-  messageBubble: {
-    borderRadius: 20,
-    padding: 12,
-    marginBottom: 8,
-    maxWidth: '75%',
-  },
-  doctorBubble: {
-    backgroundColor: '#007AFF',
-    alignSelf: 'flex-end',
-  },
-  patientBubble: {
-    backgroundColor: '#E5E5EA',
-    alignSelf: 'flex-start',
-  },
-  doctorText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-  patientText: {
-    color: '#000',
-    fontSize: 16,
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    padding: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#E5E5EA',
-    backgroundColor: '#fff',
-  },
-  input: {
-    flex: 1,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    fontSize: 16,
-    marginRight: 8,
-  },
-  sendButton: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-  },
-  sendButtonText: {
-    color: '#007AFF',
-    fontSize: 16,
-    fontWeight: '600',
-  },
+    container: {
+        flex: 1,
+        backgroundColor: '#000',
+    },
+    remoteVideo: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#222',
+    },
+    selfView: {
+        position: 'absolute',
+        top: 80,
+        right: 20,
+        width: 100,
+        height: 150,
+        backgroundColor: '#555',
+        borderRadius: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    placeholderText: {
+        color: '#fff',
+        fontSize: 12,
+    },
+    overlay: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        justifyContent: 'space-between',
+    },
+    topActions: {
+        padding: 16,
+        alignSelf: 'flex-start',
+    },
+    actionButton: {
+        backgroundColor: 'rgba(0,0,0,0.4)',
+        borderRadius: 30,
+        padding: 12,
+        marginBottom: 8,
+    },
+    toolbar: {
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0,0,0,0.4)',
+        paddingVertical: 16,
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+    },
+    controlButton: {
+        padding: 12,
+    },
+    endCallButton: {
+        backgroundColor: '#FF3B30',
+        borderRadius: 30,
+    },
 });

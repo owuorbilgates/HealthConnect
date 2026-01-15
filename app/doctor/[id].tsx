@@ -31,18 +31,14 @@ export default function DoctorProfileScreen() {
     }
 
     const handleBooking = () => {
-        Alert.alert(
-            'Confirm Booking',
-            `Do you want to book a consultation with ${doctor.name}?`,
-            [
-                { text: 'Cancel', style: 'cancel' },
-                { text: 'Book Now', onPress: () => {
-                    // Navigate to a confirmation or chat screen in the future
-                    Alert.alert('Booked!', `Your appointment with ${doctor.name} is confirmed.`);
-                    router.back();
-                }}
-            ]
-        );
+        router.push({
+            pathname: '/(booking)/calendar',
+            params: { 
+                doctorId: doctor.id, 
+                doctorName: doctor.name,
+                doctorSpecialty: doctor.specialty,
+            },
+        });
     };
 
     return (
