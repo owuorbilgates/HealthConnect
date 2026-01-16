@@ -72,13 +72,30 @@ const getStyles = (palette: (typeof Colors)['light' | 'dark']) =>
       fontSize: 16,
       color: palette.secondaryText,
     },
-    linkText: {
-      color: palette.tint,
-      fontWeight: '600',
-      fontSize: 16,
-    },
-  });
-
+          linkText: {
+            color: palette.tint,
+            fontWeight: '600',
+            fontSize: 16,
+          },
+          googleButton: {
+            backgroundColor: palette.white, // Google button is typically white
+            borderRadius: 8,
+            paddingVertical: 12,
+            paddingHorizontal: 16,
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginTop: 16, // Add some margin from the previous button
+            borderWidth: 1,
+            borderColor: '#DADCE0', // Google button border color
+            flexDirection: 'row', // To align logo and text
+          },
+          googleButtonText: {
+            color: '#3C4043', // Google button text color (dark grey)
+            fontSize: 18,
+            fontWeight: '600',
+            marginLeft: 10, // Space between logo and text
+          },
+        });
 export default function LoginScreen() {
   const router = useRouter();
   const { role } = useLocalSearchParams<{ role: string }>();
@@ -147,6 +164,11 @@ export default function LoginScreen() {
             ]}
             onPress={handleLogin}>
             <Text style={styles.buttonText}>Login</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.googleButton} onPress={() => Alert.alert('Google Login', 'Continue with Google pressed')}>
+            <Image source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg' }} style={{ width: 24, height: 24 }} />
+            <Text style={styles.googleButtonText}>Continue with Google</Text>
           </TouchableOpacity>
         </View>
 
