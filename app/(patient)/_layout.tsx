@@ -5,6 +5,7 @@ export default function PatientLayout() {
     <Stack>
       <Stack.Screen name="dashboard" options={{ headerShown: false }} />
       <Stack.Screen name="profile" options={{ headerShown: true }} />
+      <Stack.Screen name="account-management" options={{ headerShown: true, headerTitle: 'Account Management' }} />
     </Stack>
   );
 }

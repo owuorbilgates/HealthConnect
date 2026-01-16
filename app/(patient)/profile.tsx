@@ -13,8 +13,10 @@ import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
 export default function ProfileScreen() {
+  const router = useRouter();
   const navyBlue = '#0F172A';
   const kenyanGreen = '#166534';
   const softCloudBlue = '#F8FAFC'; // Canvas background
@@ -86,7 +88,12 @@ export default function ProfileScreen() {
 
             {/* Security & Account */}
             <View style={styles.section}>
-              <ThemedText style={[styles.sectionTitle, { color: navyBlue }]}>SECURITY</ThemedText>
+              <ThemedText style={[styles.sectionTitle, { color: navyBlue }]}>SECURITY & ACCOUNT</ThemedText>
+              <TouchableOpacity style={styles.securityItem} onPress={() => router.push('/account-management')}>
+                <ThemedText>Account Management</ThemedText>
+                <Ionicons name="chevron-forward-outline" size={20} color="gray" />
+              </TouchableOpacity>
+              {/* Change Password (from dashboard, adapted to TouchableOpacity) */}
               <TouchableOpacity style={styles.securityItem}>
                 <ThemedText>Change Password</ThemedText>
                 <Ionicons name="chevron-forward-outline" size={20} color="gray" />
@@ -111,6 +118,7 @@ export default function ProfileScreen() {
                   value={biometricEnabled}
                 />
               </View>
+
             </View>
           </ScrollView>
 

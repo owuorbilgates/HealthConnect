@@ -93,22 +93,7 @@ export default function PatientDashboard() {
             </View>
           </View>
 
-          {/* Section C: Quick Account Settings (Horizontal List) */}
-          <View style={styles.accountSettingsContainer}>
-            <ThemedText style={styles.sectionTitle}>Account Management</ThemedText>
-            <View style={styles.settingItem}>
-              <ThemedText>Change Password</ThemedText>
-              <Ionicons name="chevron-forward-outline" size={20} color="gray" />
-            </View>
-            <View style={styles.settingItem}>
-              <ThemedText>Notification Preferences</ThemedText>
-              <Ionicons name="chevron-forward-outline" size={20} color="gray" />
-            </View>
-            <View style={styles.settingItem}>
-              <ThemedText style={{ borderBottomWidth: 0 }}>Privacy Settings</ThemedText>
-              <Ionicons name="chevron-forward-outline" size={20} color="gray" />
-            </View>
-          </View>
+
         </ScrollView>
       </SafeAreaView>
 
@@ -257,29 +242,7 @@ const styles = StyleSheet.create({
     color: '#0F172A', // Navy Blue
     marginBottom: 10,
   },
-  accountSettingsContainer: {
-    marginBottom: 20,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.20,
-    shadowRadius: 1.41,
-    elevation: 2,
-  },
-  settingItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0', // Light gray border
-  },
+
   bottomNavBar: {
     flexDirection: 'row',
     justifyContent: 'space-around',
