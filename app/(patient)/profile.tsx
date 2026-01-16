@@ -120,6 +120,14 @@ export default function ProfileScreen() {
               </View>
 
             </View>
+
+            {/* Logout Button Section */}
+            <TouchableOpacity style={styles.logoutButton} onPress={() => {
+              // TODO: Implement actual logout logic (e.g., clear tokens, user data)
+              router.replace('/'); // Navigate to the root/login page
+            }}>
+              <ThemedText style={styles.saveButtonText}>Logout</ThemedText>
+            </TouchableOpacity>
           </ScrollView>
 
           {/* The "Save" Action */}
@@ -241,6 +249,23 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#F0F0F0', // Light gray border
+  },
+  logoutButton: {
+    backgroundColor: '#EF4444', // A shade of red for danger/logout actions
+    paddingVertical: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 16,
+    marginBottom: 20, // Offset from bottom edge
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   saveButton: {
     position: 'absolute',
