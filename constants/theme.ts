@@ -20,8 +20,8 @@ export const Colors = {
     primaryText: '#0F172A',
     accent: '#DC2626',
     secondaryText: '#64748B',
-    patientButton: '#2563EB',
-    doctorButton: '#059669',
+    patientButton: '#1E293B',
+    doctorButton: '#166534',
     white: '#FFFFFF',
   },
   dark: {
@@ -35,8 +35,8 @@ export const Colors = {
     primaryText: '#ECEDEE',
     accent: '#DC2626',
     secondaryText: '#9BA1A6',
-    patientButton: '#3B82F6',
-    doctorButton: '#10B981',
+    patientButton: '#0F172A',
+    doctorButton: '#15803d',
     white: '#FFFFFF',
   },
 };

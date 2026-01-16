@@ -9,6 +9,7 @@ import {
   Easing,
   Image,
   useColorScheme,
+  ImageBackground,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
@@ -16,9 +17,12 @@ import { Colors } from '@/constants/theme';
 
 const getStyles = (palette: (typeof Colors)['light' | 'dark']) =>
   StyleSheet.create({
+    background: {
+      flex: 1,
+    },
     container: {
       flex: 1,
-      backgroundColor: palette.backgroundTop,
+      backgroundColor: `${palette.backgroundTop}B3`,
     },
     safeArea: {
       flex: 1,
@@ -133,52 +137,69 @@ export default function WelcomeScreen() {
   }, [pulseAnim]);
 
   return (
-    <View style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        {/* <View style={styles.header}>
-          <Text style={styles.title}>HealthConnect Kenya</Text>
+    <ImageBackground
+      source={require('../assets/images/welcome_page_doc.png')}
+      style={styles.background}
+    >
+      <View style={styles.container}>
+        <SafeAreaView style={styles.safeArea}>
+          <View style={styles.header}>
           <Image
             source={require('../assets/images/logo.png')}
             style={styles.logo}
           />
-        </View> */}
-
-        <View style={styles.header}>
-          
-          <Image
-            source={require('../assets/images/logo.png')}
-            style={styles.logo}
-          />
-          <Text style={styles.title}>HealthConnect Kenya</Text>
-          <Text style={styles.subtitle}>
-            Your{' '}
-            <Animated.Text style={{ ...styles.healthText, transform: [{ scale: pulseAnim }] }}>
-              Health
-            </Animated.Text>
-            , Your Time, Your Doctor.
-          </Text>
-          
         </View>
 
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={[styles.button, styles.patientButton]}
-            onPress={() => router.push('/(auth)/login?role=patient')}
-          >
-            <Feather name="user" size={24} color={palette.white} style={styles.buttonIcon} />
-            <Text style={styles.buttonText}>I'm a Patient</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.button, styles.doctorButton]}
-            onPress={() => router.push('/(auth)/login?role=doctor')}
-          >
-            <Feather name="briefcase" size={24} color={palette.white} style={styles.buttonIcon} />
-            <Text style={styles.buttonText}>I'm a Doctor</Text>
-          </TouchableOpacity>
-        </View>
+          <View style={styles.content}>
+            {/* <Image
+              source={require('../assets/images/logo.png')}
+              style={styles.logo}
+            /> */}
+            <Text style={styles.title}>HealthConnect Kenya</Text>
+            <Text style={styles.subtitle}>
+              Your{' '}
+              <Animated.Text
+                style={{
+                  ...styles.healthText,
+                  transform: [{ scale: pulseAnim }],
+                }}
+              >
+                Health
+              </Animated.Text>
+              , Your Time, Your Doctor.
+            </Text>
+          </View>
 
-        <Text style={styles.footer}>Proudly Kenyan 🇰🇪</Text>
-      </SafeAreaView>
-    </View>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={[styles.button, styles.patientButton]}
+              onPress={() => router.push('/(auth)/login?role=patient')}
+            >
+              <Feather
+                name="user"
+                size={24}
+                color={palette.white}
+                style={styles.buttonIcon}
+              />
+              <Text style={styles.buttonText}>I'm a Patient</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.button, styles.doctorButton]}
+              onPress={() => router.push('/(auth)/login?role=doctor')}
+            >
+              <Feather
+                name="briefcase"
+                size={24}
+                color={palette.white}
+                style={styles.buttonIcon}
+              />
+              <Text style={styles.buttonText}>I'm a Doctor</Text>
+            </TouchableOpacity>
+          </View>
+
+          <Text style={styles.footer}>Proudly Kenyan 🇰🇪</Text>
+        </SafeAreaView>
+      </View>
+    </ImageBackground>
   );
 }
