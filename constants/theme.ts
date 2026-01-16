@@ -16,6 +16,13 @@ export const Colors = {
     icon: '#687076',
     tabIconDefault: '#687076',
     tabIconSelected: tintColorLight,
+    backgroundTop: '#F0F4F8',
+    primaryText: '#0F172A',
+    accent: '#DC2626',
+    secondaryText: '#64748B',
+    patientButton: '#2563EB',
+    doctorButton: '#059669',
+    white: '#FFFFFF',
   },
   dark: {
     text: '#ECEDEE',
@@ -24,6 +31,13 @@ export const Colors = {
     icon: '#9BA1A6',
     tabIconDefault: '#9BA1A6',
     tabIconSelected: tintColorDark,
+    backgroundTop: '#151718',
+    primaryText: '#ECEDEE',
+    accent: '#DC2626',
+    secondaryText: '#9BA1A6',
+    patientButton: '#3B82F6',
+    doctorButton: '#10B981',
+    white: '#FFFFFF',
   },
 };
 
