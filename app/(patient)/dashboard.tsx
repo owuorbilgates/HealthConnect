@@ -1,5 +1,5 @@
-import { Stack } from 'expo-router';
-import { StyleSheet, View, Text, ScrollView } from 'react-native';
+import { Stack, useRouter } from 'expo-router';
+import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -9,6 +9,7 @@ import { useState } from 'react'; // Import useState
 
 export default function PatientDashboard() {
   const [hasAppointment, setHasAppointment] = useState(false); // For conditional rendering
+  const router = useRouter();
 
   // Brand Colors
   const navyBlue = '#0F172A';
@@ -22,7 +23,7 @@ export default function PatientDashboard() {
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
           {/* Section 1: Header */}
           <View style={styles.header}>
-            <View style={styles.userInfo}>
+            <TouchableOpacity onPress={() => router.push('/profile')} style={styles.userInfo}>
               {/* Avatar Placeholder */}
               <View style={styles.avatar}>
                 <ThemedText style={styles.avatarText}>JD</ThemedText>
@@ -31,7 +32,7 @@ export default function PatientDashboard() {
                 <ThemedText style={{ color: 'gray', fontSize: 14 }}>Welcome back,</ThemedText>
                 <ThemedText style={{ color: navyBlue, fontSize: 20, fontWeight: 'bold' }}>John Doe</ThemedText>
               </View>
-            </View>
+            </TouchableOpacity>
             {/* Notification Bell */}
             <View style={styles.notificationBellContainer}>
               <Ionicons name="notifications-outline" size={24} color={navyBlue} />
@@ -73,11 +74,11 @@ export default function PatientDashboard() {
               <ThemedText style={{ fontSize: 12, color: 'gray', textAlign: 'center' }}>Book a video consultation.</ThemedText>
             </View>
             {/* Card 2: My Profile */}
-            <View style={styles.gridItem}>
+            <TouchableOpacity style={styles.gridItem} onPress={() => router.push('/profile')}>
               <Ionicons name="person-outline" size={30} color="gray" />
               <ThemedText style={{ fontSize: 16, fontWeight: 'bold', marginTop: 10 }}>My Profile</ThemedText>
               <ThemedText style={{ fontSize: 12, color: 'gray', textAlign: 'center' }}>Update details & password.</ThemedText>
-            </View>
+            </TouchableOpacity>
             {/* Card 3: Medical Records */}
             <View style={styles.gridItem}>
               <Ionicons name="document-text-outline" size={30} color={kenyanGreen} />
@@ -125,10 +126,10 @@ export default function PatientDashboard() {
           <Ionicons name="chatbubble-outline" size={24} color="gray" />
           <ThemedText style={styles.navText}>Chat</ThemedText>
         </View>
-        <View style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => router.push('/profile')}>
           <Ionicons name="person-circle-outline" size={24} color="gray" />
           <ThemedText style={styles.navText}>Profile</ThemedText>
-        </View>
+        </TouchableOpacity>
       </View>
     </ThemedView>
   );
