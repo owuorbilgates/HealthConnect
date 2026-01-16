@@ -1,83 +1,135 @@
-import { ThemedText } from '@/components/themed-text';
+import { Stack } from 'expo-router';
+import { StyleSheet, View, Text, ScrollView } from 'react-native';
 import { ThemedView } from '@/components/themed-view';
-import { useRouter, Stack } from 'expo-router';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
+import { ThemedText } from '@/components/themed-text';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
-
-const MOCK_DOCTORS = [
-  {
-    id: '1',
-    name: 'Dr. John Doe',
-    specialty: 'Cardiologist',
-    location: 'Nairobi',
-    rating: 4.8,
-    image: 'https://i.pravatar.cc/150?img=68', // Placeholder image
-  },
-  {
-    id: '2',
-    name: 'Dr. Jane Smith',
-    specialty: 'Pediatrician',
-    location: 'Mombasa',
-    rating: 4.9,
-    image: 'https://i.pravatar.cc/150?img=43',
-  },
-  {
-    id: '3',
-    name: 'Dr. Peter Jones',
-    specialty: 'Dermatologist',
-    location: 'Kisumu',
-    rating: 4.7,
-    image: 'https://i.pravatar.cc/150?img=60',
-  },
-  {
-    id: '4',
-    name: 'Dr. Maryanne Okoro',
-    specialty: 'General Practitioner',
-    location: 'Nakuru',
-    rating: 5.0,
-    image: 'https://i.pravatar.cc/150?img=32',
-  },
-];
+import { Ionicons } from '@expo/vector-icons'; // Import Ionicons
+import { LinearGradient } from 'expo-linear-gradient'; // Import LinearGradient
+import { useState } from 'react'; // Import useState
 
 export default function PatientDashboard() {
-  const router = useRouter();
+  const [hasAppointment, setHasAppointment] = useState(false); // For conditional rendering
 
-  const renderDoctor = ({ item }: { item: typeof MOCK_DOCTORS[0] }) => (
-    <TouchableOpacity style={styles.doctorCard} onPress={() => router.push(`/doctor/${item.id}`)}>
-      <Image source={{ uri: item.image }} style={styles.doctorImage} />
-      <View style={styles.doctorInfo}>
-        <Text style={styles.doctorName}>{item.name}</Text>
-        <Text style={styles.doctorSpecialty}>{item.specialty}</Text>
-        <Text style={styles.doctorLocation}>{item.location}</Text>
-      </View>
-      <View style={styles.ratingContainer}>
-        <Text style={styles.ratingText}>⭐ {item.rating}</Text>
-      </View>
-    </TouchableOpacity>
-  );
+  // Brand Colors
+  const navyBlue = '#0F172A';
+  const kenyanGreen = '#166534';
+  const softCloudBlue = '#F8FAFC';
+  const lighterBlue = '#1E293B'; // For gradient
 
   return (
-    <ThemedView style={styles.container}>
-      <Stack.Screen 
-        options={{ 
-            title: 'HealthConnect',
-            headerRight: () => (
-                <TouchableOpacity onPress={() => router.push({ pathname: '/(settings)', params: { role: 'patient' }})}>
-                    <Ionicons name="person-circle-outline" size={32} color="#007AFF" style={{ marginRight: 16 }} />
-                </TouchableOpacity>
-            )
-        }} 
-      />
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedText type="title" style={styles.title}>Available Doctors</ThemedText>
-        <FlatList
-          data={MOCK_DOCTORS}
-          renderItem={renderDoctor}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.listContainer}
-        />
+    <ThemedView style={[styles.container, { backgroundColor: softCloudBlue }]}>
+      <SafeAreaView style={{ flex: 1 }}>
+        <ScrollView contentContainerStyle={styles.scrollViewContent}>
+          {/* Section 1: Header */}
+          <View style={styles.header}>
+            <View style={styles.userInfo}>
+              {/* Avatar Placeholder */}
+              <View style={styles.avatar}>
+                <ThemedText style={styles.avatarText}>JD</ThemedText>
+              </View>
+              <View>
+                <ThemedText style={{ color: 'gray', fontSize: 14 }}>Welcome back,</ThemedText>
+                <ThemedText style={{ color: navyBlue, fontSize: 20, fontWeight: 'bold' }}>John Doe</ThemedText>
+              </View>
+            </View>
+            {/* Notification Bell */}
+            <View style={styles.notificationBellContainer}>
+              <Ionicons name="notifications-outline" size={24} color={navyBlue} />
+              <View style={styles.activeDot} />
+            </View>
+          </View>
+
+          {/* Section A: The "Action Status" Card (The Hero) */}
+          {hasAppointment ? (
+            <View style={[styles.card, styles.heroCardAppointment]}>
+              <View style={styles.leftBorderStrip} />
+              <View style={{ paddingLeft: 20 }}>
+                <ThemedText style={{ fontSize: 16, marginBottom: 5 }}>10:30 AM - Dr. Emily White</ThemedText>
+                <View style={[styles.findDoctorButton, { backgroundColor: kenyanGreen }]}>
+                  <ThemedText style={{ color: 'white', fontWeight: 'bold' }}>Join Video Room</ThemedText>
+                </View>
+              </View>
+            </View>
+          ) : (
+            <LinearGradient
+              colors={[navyBlue, lighterBlue]}
+              style={[styles.card, styles.heroCardNoAppointment]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+            >
+              <ThemedText style={{ color: 'white', fontSize: 18, marginBottom: 10 }}>No upcoming consultations.</ThemedText>
+              <View style={styles.findDoctorButton}>
+                <ThemedText style={{ color: navyBlue, fontWeight: 'bold' }}>Find a Doctor</ThemedText>
+              </View>
+            </LinearGradient>
+          )}
+
+          {/* Section B: Client Portal Grid (The Core Navigation) */}
+          <View style={styles.gridContainer}>
+            {/* Card 1: Find a Specialist */}
+            <View style={[styles.gridItem, styles.primaryGridItem]}>
+              <Ionicons name="search-outline" size={30} color={navyBlue} />
+              <ThemedText style={{ fontSize: 16, fontWeight: 'bold', color: navyBlue, marginTop: 10 }}>Find a Specialist</ThemedText>
+              <ThemedText style={{ fontSize: 12, color: 'gray', textAlign: 'center' }}>Book a video consultation.</ThemedText>
+            </View>
+            {/* Card 2: My Profile */}
+            <View style={styles.gridItem}>
+              <Ionicons name="person-outline" size={30} color="gray" />
+              <ThemedText style={{ fontSize: 16, fontWeight: 'bold', marginTop: 10 }}>My Profile</ThemedText>
+              <ThemedText style={{ fontSize: 12, color: 'gray', textAlign: 'center' }}>Update details & password.</ThemedText>
+            </View>
+            {/* Card 3: Medical Records */}
+            <View style={styles.gridItem}>
+              <Ionicons name="document-text-outline" size={30} color={kenyanGreen} />
+              <ThemedText style={{ fontSize: 16, fontWeight: 'bold', marginTop: 10 }}>Medical Records</ThemedText>
+              <ThemedText style={{ fontSize: 12, color: 'gray', textAlign: 'center' }}>View prescriptions & notes.</ThemedText>
+            </View>
+            {/* Card 4: Wallet & Payments */}
+            <View style={styles.gridItem}>
+              <Ionicons name="wallet-outline" size={30} color={kenyanGreen} />
+              <ThemedText style={{ fontSize: 16, fontWeight: 'bold', marginTop: 10 }}>Wallet & Payments</ThemedText>
+              <ThemedText style={{ fontSize: 12, color: 'gray', textAlign: 'center' }}>Manage top-ups & history.</ThemedText>
+            </View>
+          </View>
+
+          {/* Section C: Quick Account Settings (Horizontal List) */}
+          <View style={styles.accountSettingsContainer}>
+            <ThemedText style={styles.sectionTitle}>Account Management</ThemedText>
+            <View style={styles.settingItem}>
+              <ThemedText>Change Password</ThemedText>
+              <Ionicons name="chevron-forward-outline" size={20} color="gray" />
+            </View>
+            <View style={styles.settingItem}>
+              <ThemedText>Notification Preferences</ThemedText>
+              <Ionicons name="chevron-forward-outline" size={20} color="gray" />
+            </View>
+            <View style={styles.settingItem}>
+              <ThemedText style={{ borderBottomWidth: 0 }}>Privacy Settings</ThemedText>
+              <Ionicons name="chevron-forward-outline" size={20} color="gray" />
+            </View>
+          </View>
+        </ScrollView>
       </SafeAreaView>
+
+      {/* Section D: Bottom Navigation Bar (Mobile View) */}
+      <View style={styles.bottomNavBar}>
+        <View style={styles.navItem}>
+          <Ionicons name="home" size={24} color={navyBlue} />
+          <ThemedText style={[styles.navText, { color: navyBlue }]}>Home</ThemedText>
+        </View>
+        <View style={styles.navItem}>
+          <Ionicons name="calendar-outline" size={24} color="gray" />
+          <ThemedText style={styles.navText}>Appointments</ThemedText>
+        </View>
+        <View style={styles.navItem}>
+          <Ionicons name="chatbubble-outline" size={24} color="gray" />
+          <ThemedText style={styles.navText}>Chat</ThemedText>
+        </View>
+        <View style={styles.navItem}>
+          <Ionicons name="person-circle-outline" size={24} color="gray" />
+          <ThemedText style={styles.navText}>Profile</ThemedText>
+        </View>
+      </View>
     </ThemedView>
   );
 }
@@ -86,62 +138,167 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  safeArea: {
-    flex: 1,
+  scrollViewContent: {
     paddingHorizontal: 16,
+    paddingBottom: 80, // To make space for the bottom nav bar
   },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginVertical: 16,
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+    paddingTop: 10,
   },
-  listContainer: {
-    paddingBottom: 16,
-  },
-  doctorCard: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
+  userInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
   },
-  doctorImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    marginRight: 16,
+  avatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#D1D5DB', // Light gray for placeholder
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
   },
-  doctorInfo: {
-    flex: 1,
-  },
-  doctorName: {
+  avatarText: {
+    color: '#FFFFFF',
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: 'bold',
   },
-  doctorSpecialty: {
-    fontSize: 14,
-    color: '#666',
-    marginTop: 2,
+  notificationBellContainer: {
+    position: 'relative',
   },
-  doctorLocation: {
+  activeDot: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#166534', // Kenyan Green
+    borderWidth: 2,
+    borderColor: '#F8FAFC', // Soft Cloud Blue
+  },
+  card: {
+    borderRadius: 16,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.20,
+    shadowRadius: 1.41,
+    elevation: 2,
+  },
+  heroCardNoAppointment: {
+    padding: 20,
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    minHeight: 120,
+  },
+  heroCardAppointment: {
+    backgroundColor: '#FFFFFF',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 20,
+  },
+  leftBorderStrip: {
+    width: 8,
+    height: '100%',
+    backgroundColor: '#166534', // Kenyan Green
+    borderTopLeftRadius: 16,
+    borderBottomLeftRadius: 16,
+    marginRight: 10,
+  },
+  findDoctorButton: {
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 25,
+    alignSelf: 'flex-start',
+    marginTop: 15,
+  },
+  gridContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  gridItem: {
+    width: '48%', // Roughly 2 items per row, with space between
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 15,
+    aspectRatio: 1, // Make cards square
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.20,
+    shadowRadius: 1.41,
+    elevation: 2,
+  },
+  primaryGridItem: {
+    backgroundColor: '#F8FAFC', // Soft Cloud Blue for distinct background
+    borderWidth: 2,
+    borderColor: '#0F172A', // Navy Blue border
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#0F172A', // Navy Blue
+    marginBottom: 10,
+  },
+  accountSettingsContainer: {
+    marginBottom: 20,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.20,
+    shadowRadius: 1.41,
+    elevation: 2,
+  },
+  settingItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0', // Light gray border
+  },
+  bottomNavBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderTopWidth: 1,
+    borderTopColor: '#F0F0F0',
+    paddingVertical: 10,
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingBottom: 20, // To account for safe area in iOS
+  },
+  navItem: {
+    alignItems: 'center',
+  },
+  navText: {
     fontSize: 12,
-    color: '#888',
-    marginTop: 2,
-  },
-  ratingContainer: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-    backgroundColor: '#FFFBEA',
-  },
-  ratingText: {
-    color: '#F59E0B',
-    fontWeight: '600',
+    color: 'gray',
+    marginTop: 4,
   },
 });
