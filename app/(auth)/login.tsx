@@ -2,8 +2,9 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useRouter, useLocalSearchParams, Link } from 'expo-router';
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Colors } from '@/constants/theme';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -33,6 +34,9 @@ export default function LoginScreen() {
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
+        <View style={styles.logoContainer}>
+          <Image source={require('@/assets/images/logo.png')} style={styles.logo} />
+        </View>
         <ThemedText type="title" style={styles.title}>
           {roleTitle} Login
         </ThemedText>
@@ -68,6 +72,11 @@ export default function LoginScreen() {
               </Text>
             </TouchableOpacity>
           </Link>
+          <Link href="/(auth)/forgot-password" asChild>
+            <TouchableOpacity style={{ marginTop: 12 }}>
+              <Text style={styles.linkText}>Forgot Password?</Text>
+            </TouchableOpacity>
+          </Link>
         </View>
       </SafeAreaView>
     </ThemedView>
@@ -77,37 +86,50 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: Colors.light.backgroundTop,
   },
   safeArea: {
     flex: 1,
     justifyContent: 'center',
     padding: 24,
   },
+  logoContainer: {
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  logo: {
+    width: 100,
+    height: 100,
+    resizeMode: 'contain',
+  },
   title: {
     fontSize: 32,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 48,
+    color: Colors.light.primaryText,
   },
   form: {
     width: '100%',
   },
   input: {
-    backgroundColor: '#f0f0f0',
+    backgroundColor: Colors.light.white,
     borderRadius: 8,
     padding: 16,
     fontSize: 16,
     marginBottom: 16,
-    color: '#000',
+    color: Colors.light.text,
+    borderWidth: 1,
+    borderColor: '#ddd',
   },
   button: {
-    backgroundColor: '#007AFF',
+    backgroundColor: Colors.light.tint,
     borderRadius: 8,
     paddingVertical: 16,
     alignItems: 'center',
   },
   buttonText: {
-    color: '#fff',
+    color: Colors.light.white,
     fontSize: 18,
     fontWeight: '600',
   },
@@ -117,10 +139,11 @@ const styles = StyleSheet.create({
   },
   footerText: {
     fontSize: 16,
-    color: '#888',
+    color: Colors.light.secondaryText,
   },
   linkText: {
-    color: '#007AFF',
+    color: Colors.light.tint,
     fontWeight: '600',
+    fontSize: 16,
   },
 });
