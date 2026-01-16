@@ -9,6 +9,12 @@ export default function RootLayout() {
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        
+        {/* 👇 THIS IS THE FIX. It hides the header for the entire 'patient' folder */}
+        <Stack.Screen name="(patient)" options={{ headerShown: false }} />
+
+        {/* You likely need this for the doctor side too later */}
+        <Stack.Screen name="(doctor)" options={{ headerShown: false }} />
       </Stack>
       <StatusBar style="dark" />
     </ThemeProvider>
