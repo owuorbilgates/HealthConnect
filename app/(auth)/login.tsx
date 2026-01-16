@@ -1,16 +1,92 @@
 import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
 import { useRouter, useLocalSearchParams, Link } from 'expo-router';
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+  Image,
+  useColorScheme,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '@/constants/theme';
+
+const getStyles = (palette: (typeof Colors)['light' | 'dark']) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: palette.backgroundTop,
+    },
+    safeArea: {
+      flex: 1,
+      justifyContent: 'center',
+      padding: 24,
+    },
+    logoContainer: {
+      alignItems: 'center',
+      marginBottom: 24,
+    },
+    logo: {
+      width: 100,
+      height: 100,
+      resizeMode: 'contain',
+    },
+    title: {
+      fontSize: 32,
+      fontWeight: 'bold',
+      textAlign: 'center',
+      marginBottom: 48,
+      color: palette.primaryText,
+    },
+    form: {
+      width: '100%',
+    },
+    input: {
+      backgroundColor: palette.white,
+      borderRadius: 8,
+      padding: 16,
+      fontSize: 16,
+      marginBottom: 16,
+      color: palette.text,
+      borderWidth: 1,
+      borderColor: '#ddd',
+    },
+    button: {
+      borderRadius: 8,
+      paddingVertical: 16,
+      alignItems: 'center',
+    },
+    buttonText: {
+      color: palette.white,
+      fontSize: 18,
+      fontWeight: '600',
+    },
+    footer: {
+      marginTop: 24,
+      alignItems: 'center',
+    },
+    footerText: {
+      fontSize: 16,
+      color: palette.secondaryText,
+    },
+    linkText: {
+      color: palette.tint,
+      fontWeight: '600',
+      fontSize: 16,
+    },
+  });
 
 export default function LoginScreen() {
   const router = useRouter();
   const { role } = useLocalSearchParams<{ role: string }>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const colorScheme = useColorScheme() ?? 'light';
+  const palette = Colors[colorScheme];
+  const styles = getStyles(palette);
 
   const handleLogin = () => {
     // Basic validation
@@ -32,14 +108,12 @@ export default function LoginScreen() {
   const roleTitle = role?.charAt(0).toUpperCase() + role?.slice(1);
 
   return (
-    <ThemedView style={styles.container}>
+    <View style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.logoContainer}>
           <Image source={require('@/assets/images/logo.png')} style={styles.logo} />
         </View>
-        <ThemedText type="title" style={styles.title}>
-          {roleTitle} Login
-        </ThemedText>
+        <Text style={styles.title}>{roleTitle} Login</Text>
 
         <View style={styles.form}>
           <TextInput
@@ -59,7 +133,19 @@ export default function LoginScreen() {
             secureTextEntry
             placeholderTextColor="#888"
           />
-          <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <TouchableOpacity
+            style={[
+              styles.button,
+              {
+                backgroundColor:
+                  role === 'patient'
+                    ? palette.patientButton
+                    : role === 'doctor'
+                    ? palette.doctorButton
+                    : palette.tint,
+              },
+            ]}
+            onPress={handleLogin}>
             <Text style={styles.buttonText}>Login</Text>
           </TouchableOpacity>
         </View>
@@ -79,71 +165,6 @@ export default function LoginScreen() {
           </Link>
         </View>
       </SafeAreaView>
-    </ThemedView>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.light.backgroundTop,
-  },
-  safeArea: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 24,
-  },
-  logoContainer: {
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  logo: {
-    width: 100,
-    height: 100,
-    resizeMode: 'contain',
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 48,
-    color: Colors.light.primaryText,
-  },
-  form: {
-    width: '100%',
-  },
-  input: {
-    backgroundColor: Colors.light.white,
-    borderRadius: 8,
-    padding: 16,
-    fontSize: 16,
-    marginBottom: 16,
-    color: Colors.light.text,
-    borderWidth: 1,
-    borderColor: '#ddd',
-  },
-  button: {
-    backgroundColor: Colors.light.tint,
-    borderRadius: 8,
-    paddingVertical: 16,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: Colors.light.white,
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  footer: {
-    marginTop: 24,
-    alignItems: 'center',
-  },
-  footerText: {
-    fontSize: 16,
-    color: Colors.light.secondaryText,
-  },
-  linkText: {
-    color: Colors.light.tint,
-    fontWeight: '600',
-    fontSize: 16,
-  },
-});
